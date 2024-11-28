@@ -1,20 +1,20 @@
 const express = require('express');
-const bodyParser = require('body-parser');
-const cors = require('cors');
-
 const app = express();
-const universityRoutes = require('./routes/universities');
-const studentRoutes = require('./routes/students');
+const studentRoutes = require('./routes/studentRoutes');
 
 // Middleware
-app.use(cors());
-app.use(bodyParser.json());
+app.use(express.json());
 
-// Routes
-app.use('/universities', universityRoutes);
-app.use('/students', studentRoutes);
+// Use student routes
+app.use('/api', studentRoutes);
+app.use('/api', fundingRoutes);
+app.use('/api', programRoutes);
+app.use('/api', rankingRoutes);
+app.use('/api', admissionRoutes);
+app.use('/api', userRoutes);
 
-const PORT = 3000;
+// Server listening on a port
+const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
-    console.log(`Server running on http://localhost:${PORT}`);
+    console.log(`Server running on port ${PORT}`);
 });
