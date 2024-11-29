@@ -12,6 +12,7 @@ app.use('/api', programRoutes);
 app.use('/api', rankingRoutes);
 app.use('/api', admissionRoutes);
 app.use('/api', userRoutes);
+app.use('/api', wishlistRoutes);
 
 // Server listening on a port
 const PORT = process.env.PORT || 5000;
