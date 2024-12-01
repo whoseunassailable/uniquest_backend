@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const admissionController = require('../controllers/admissionController');
+const admissionController = require('../controllers/admissionController.js');
 
 // Route to create a new admission
 router.post('/admissions', admissionController.createAdmission);

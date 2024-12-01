@@ -1,4 +1,3 @@
-const db = require('../config/db');
 
 // Create a new ranking
 exports.createRanking = (req, res) => {
