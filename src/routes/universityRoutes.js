@@ -1,76 +1,20 @@
-// backend/routes/universities.js
 const express = require('express');
 const router = express.Router();
+const universitiesController = require('../controllers/universitiesController.js');
 
-// Create a university
-router.post('/', (req, res) => {
-  const { university_name, location, application_deadline } = req.body;
-  const query = `INSERT INTO Universities (university_name, location, application_deadline) 
-                 VALUES (?, ?, ?)`;
-  db.query(query, [university_name, location, application_deadline], (err, result) => {
-    if (err) {
-      return res.status(500).json({ error: err.message });
-    }
-    res.status(201).json({ message: 'University added successfully', id: result.insertId });
-  });
-});
+// Route to create a university
+router.post('/universities', universitiesController.createUniversity);
 
-// Read all universities
-router.get('/', (req, res) => {
-  const query = 'SELECT * FROM Universities';
-  db.query(query, (err, results) => {
-    if (err) {
-      return res.status(500).json({ error: err.message });
-    }
-    res.status(200).json(results);
-  });
-});
+// Route to get all universities
+router.get('/universities', universitiesController.getAllUniversities);
 
-// Read a single university
-router.get('/:id', (req, res) => {
-  const { id } = req.params;
-  const query = 'SELECT * FROM Universities WHERE university_id = ?';
-  db.query(query, [id], (err, result) => {
-    if (err) {
-      return res.status(500).json({ error: err.message });
-    }
-    if (result.length === 0) {
-      return res.status(404).json({ message: 'University not found' });
-    }
-    res.status(200).json(result[0]);
-  });
-});
+// Route to get a university by ID
+router.get('/universities/:university_id', universitiesController.getUniversityById);
 
-// Update a university
-router.put('/:id', (req, res) => {
-  const { id } = req.params;
-  const { university_name, location, application_deadline } = req.body;
-  const query = `UPDATE Universities SET university_name = ?, location = ?, application_deadline = ? 
-                 WHERE university_id = ?`;
-  db.query(query, [university_name, location, application_deadline, id], (err, result) => {
-    if (err) {
-      return res.status(500).json({ error: err.message });
-    }
-    if (result.affectedRows === 0) {
-      return res.status(404).json({ message: 'University not found' });
-    }
-    res.status(200).json({ message: 'University updated successfully' });
-  });
-});
+// Route to update a university
+router.put('/universities/:university_id', universitiesController.updateUniversity);
 
-// Delete a university
-router.delete('/:id', (req, res) => {
-  const { id } = req.params;
-  const query = 'DELETE FROM Universities WHERE university_id = ?';
-  db.query(query, [id], (err, result) => {
-    if (err) {
-      return res.status(500).json({ error: err.message });
-    }
-    if (result.affectedRows === 0) {
-      return res.status(404).json({ message: 'University not found' });
-    }
-    res.status(200).json({ message: 'University deleted successfully' });
-  });
-});
+// Route to delete a university
+router.delete('/universities/:university_id', universitiesController.deleteUniversity);
 
 module.exports = router;

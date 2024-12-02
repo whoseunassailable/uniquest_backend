@@ -1,21 +1,78 @@
 const db = require('../config/db');
+const bcrypt = require('bcrypt');
+
 
 // Create a student
-exports.createStudent = (req, res) => {
+exports.createStudent = async (req, res) => {
     try {
-        const { first_name, last_name, email, gre_score, toefl_score, preferred_location, phone, date_of_birth } = req.body;
-        const query = 'INSERT INTO Students (first_name, last_name, email, gre_score, toefl_score, preferred_location, phone, date_of_birth) VALUES (?, ?, ?, ?, ?, ?, ?, ?)';
-        db.query(query, [first_name, last_name, email, gre_score, toefl_score, preferred_location, phone, date_of_birth], (err, result) => {
-            if (err) return res.status(500).json({ error: err.message });
+        const { first_name, last_name, email, gre_score, toefl_score, preferred_location, phone, date_of_birth, password } = req.body;
+
+        // Validate required fields
+        if (!first_name || !last_name || !email || !phone || !date_of_birth || !password) {
+            return res.status(400).json({ error: "Missing required fields" });
+        }
+
+        // Hash the password
+        const hashedPassword = await bcrypt.hash(password, 10); // 10 is the salt rounds
+
+        // SQL query to insert the student record
+        const query = 'INSERT INTO Students (first_name, last_name, email, gre_score, toefl_score, preferred_location, phone, date_of_birth, password) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)';
+
+        db.query(query, [first_name, last_name, email, gre_score, toefl_score, preferred_location, phone, date_of_birth, hashedPassword], (err, result) => {
+            if (err) {
+                return res.status(500).json({ error: err.message });
+            }
             return res.status(201).json({ message: 'Student created successfully', data: result });
         });
-        if (!first_name || !last_name || !email || !phone || !date_of_birth) {
-            return res.status(400).json({ error: "Missing required fields" });
-          }
     } catch (e) {
         return res.status(500).json({ error: e.message });
     }
 };
+
+// Login a student
+exports.loginStudent = async (req, res) => {
+    try {
+        const { email, password } = req.body;
+
+        // Validate required fields
+        if (!email || !password) {
+            return res.status(400).json({ error: "Email and password are required" });
+        }
+
+        // SQL query to get the student by email
+        const query = 'SELECT * FROM Students WHERE email = ?';
+        db.query(query, [email], async (err, result) => {
+            if (err) {
+                return res.status(500).json({ error: err.message });
+            }
+
+            if (result.length === 0) {
+                return res.status(404).json({ error: 'Student not found' });
+            }
+
+            const student = result[0];
+
+            // Compare the entered password with the hashed password
+            const isMatch = await bcrypt.compare(password, student.password);
+            if (!isMatch) {
+                return res.status(401).json({ error: 'Invalid credentials' });
+            }
+
+
+            return res.status(200).json({
+                message: 'Login successful',
+                data: {
+                    studentId: student.id,
+                    email: student.email,
+                }
+            });
+        });
+    } catch (e) {
+        return res.status(500).json({ error: e.message });
+    }
+};
+
+
 
 // Get all students
 exports.getAllStudents = (req, res) => {

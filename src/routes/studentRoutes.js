@@ -5,6 +5,9 @@ const studentsController = require('../controllers/studentsController.js');
 // Route to create a student
 router.post('/students', studentsController.createStudent);
 
+// Routes to login a student
+router.post('/students/login', studentsController.loginStudent); // All routes in auth.js will now start with '/api/auth'
+
 // Route to get all students
 router.get('/students', studentsController.getAllStudents);
 
