@@ -6,7 +6,7 @@ const fundingRoutes = require('./routes/fundingRoutes.js');
 const programRoutes = require('./routes/programRoutes.js');
 const rankingRoutes = require('./routes/rankingRoutes.js');
 // const admissionRoutes = require('./routes/admissionRoutes.js');
-// const universityRoutes = require('./routes/universityRoutes.js');
+const universityRoutes = require('./routes/universityRoutes.js');
 // const userRoutes = require('./routes/userRoutes.js');
 // const wishlistRoutes = require('./routes/wishlistRoutes.js');
 
@@ -25,7 +25,7 @@ app.use('/api', rankingRoutes);
 // app.use('/api', admissionRoutes);
 // app.use('/api', userRoutes);
 // app.use('/api', wishlistRoutes);
-// app.use('/api', universityRoutes);
+app.use('/api', universityRoutes);
 
 // Server listening on a port
 const PORT = process.env.PORT || 5000;

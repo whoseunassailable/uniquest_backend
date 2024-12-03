@@ -116,7 +116,7 @@ exports.getStudentById = (req, res) => {
         return res.status(500).json({ error: e.message });
     }
 };
-
+/*** 
 // Update a student
 exports.updateStudent = (req, res) => {
     try {
@@ -132,6 +132,62 @@ exports.updateStudent = (req, res) => {
         return res.status(500).json({ error: e.message });
     }
 };
+*/
+
+// Update specific student fields
+exports.updateStudent = (req, res) => {
+    try {
+        const { student_id } = req.params;
+        const updates = req.body;  // The request body can contain multiple fields to update
+
+        // Log the request for debugging
+        console.log(updates);
+
+        // Validate that the body is not empty
+        if (Object.keys(updates).length === 0) {
+            return res.status(400).json({ error: "No fields to update" });
+        }
+
+        // List of valid fields to be updated
+        const validFields = ['first_name', 'last_name', 'gre_score', 'toefl_score', 'preferred_location', 'phone', 'date_of_birth'];
+
+        // Check if any invalid field is provided
+        for (let field in updates) {
+            if (!validFields.includes(field)) {
+                return res.status(400).json({ error: `Invalid field: ${field}` });
+            }
+        }
+
+        // Create the SQL query dynamically by adding the valid fields
+        let query = 'UPDATE Students SET ';
+        let values = [];
+
+        // Add field updates to the query
+        for (let field in updates) {
+            query += `${field} = ?, `;
+            values.push(updates[field]);
+        }
+
+        // Remove the last comma and space from the query
+        query = query.slice(0, -2); 
+
+        query += ' WHERE student_id = ?';
+        values.push(student_id); // Add student_id to the values array
+
+        // Execute the query to update the student
+        db.query(query, values, (err, result) => {
+            if (err) return res.status(500).json({ error: err.message });
+            if (result.affectedRows === 0) return res.status(404).json({ message: 'Student not found' });
+
+            return res.status(200).json({ message: 'Student updated successfully' });
+        });
+    } catch (e) {
+        return res.status(500).json({ error: e.message });
+    }
+};
+
+
+
 
 // Delete a student
 exports.deleteStudent = (req, res) => {
@@ -148,7 +204,7 @@ exports.deleteStudent = (req, res) => {
     }
 };
 
-
+/** 
 // Update preferred location
 exports.updatePreferredLocation = (req, res) => {
     try {
@@ -169,8 +225,11 @@ exports.updatePreferredLocation = (req, res) => {
 // Update GRE score
 exports.updateGreScore = (req, res) => {
     try {
+        //const student_id  = req.body.student_id || req.params.student_id;
         const { student_id } = req.params;
         const { gre_score } = req.body;
+        console.log('Student id ', student_id, req.params);
+
 
         const query = 'UPDATE Students SET gre_score = ? WHERE student_id = ?';
         db.query(query, [gre_score, student_id], (err, result) => {
@@ -199,3 +258,4 @@ exports.updateToeflScore = (req, res) => {
         return res.status(500).json({ error: e.message });
     }
 };
+*/

@@ -48,6 +48,7 @@ exports.getUniversityById = (req, res) => {
     }
 };
 
+/**
 // Update a university
 exports.updateUniversity = (req, res) => {
     try {
@@ -58,6 +59,59 @@ exports.updateUniversity = (req, res) => {
             if (err) return res.status(500).json({ error: err.message });
             if (result.affectedRows === 0) return res.status(404).json({ message: 'University not found' });
             return res.status(200).json({ message: 'University updated successfully' });
+        });
+    } catch (e) {
+        return res.status(500).json({ error: e.message });
+    }
+};
+ */
+
+// Update specific university fields
+exports.updateUniversity = (req, res) => {
+    try {
+        const { university_id } = req.params;
+        const updates = req.body;  // The request body can contain multiple fields to update
+
+        // Log the request for debugging
+        console.log(updates);
+
+        // Validate that the body is not empty
+        if (Object.keys(updates).length === 0) {
+            return res.status(400).json({ error: "No fields to update" });
+        }
+
+        // List of valid fields to be updated
+        const validFields = ['university_name', 'location'];
+
+        // Check if any invalid field is provided
+        for (let field in updates) {
+            if (!validFields.includes(field)) {
+                return res.status(400).json({ error: `Invalid field: ${field}` });
+            }
+        }
+
+        // Create the SQL query dynamically by adding the valid fields
+        let query = 'UPDATE Universities SET ';
+        let values = [];
+
+        // Add field updates to the query
+        for (let field in updates) {
+            query += `${field} = ?, `;
+            values.push(updates[field]);
+        }
+
+        // Remove the last comma and space from the query
+        query = query.slice(0, -2); 
+
+        query += ' WHERE university_id = ?';
+        values.push(university_id); // Add university_id to the values array
+
+        // Execute the query to update the university
+        db.query(query, values, (err, result) => {
+            if (err) return res.status(500).json({ error: err.message });
+            if (result.affectedRows === 0) return res.status(404).json({ message: 'University not found' });
+
+            return res.status(200).json({ message: 'University updated successfully'});
         });
     } catch (e) {
         return res.status(500).json({ error: e.message });

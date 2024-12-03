@@ -18,13 +18,14 @@ router.get('/students/:student_id', studentsController.getStudentById);
 router.put('/students/:student_id', studentsController.updateStudent);
 
 // Route to update preferred location
-router.put('/students/:student_id/location', studentsController.updatePreferredLocation);
+router.put('/students/:student_id/location', studentsController.updateStudent);
 
 // Route to update GRE score
-router.put('/students/:student_id/gre', studentsController.updateGreScore);
+router.put('/studentsGre/:student_id', studentsController.updateStudent);
 
 // Route to update TOEFL score
-router.put('/students/:student_id/toefl', studentsController.updateToeflScore);
+router.put('/students/:student_id/toefl', studentsController.updateStudent);
+
 
 // Route to delete a student
 router.delete('/students/:student_id', studentsController.deleteStudent);
