@@ -5,29 +5,44 @@ const bcrypt = require('bcrypt');
 // Create a student
 exports.createStudent = async (req, res) => {
     try {
-        const { first_name, last_name, email, gre_score, toefl_score, preferred_location, phone, date_of_birth, password } = req.body;
+        const { student_id, first_name, last_name, email, gre_score, toefl_score, preferred_location, phone, date_of_birth, password } = req.body;
 
         // Validate required fields
-        if (!first_name || !last_name || !email || !phone || !date_of_birth || !password) {
+        if (!student_id || !first_name || !last_name || !email || !phone || !date_of_birth || !password) {
             return res.status(400).json({ error: "Missing required fields" });
         }
 
         // Hash the password
         const hashedPassword = await bcrypt.hash(password, 10); // 10 is the salt rounds
 
-        // SQL query to insert the student record
-        const query = 'INSERT INTO Students (first_name, last_name, email, gre_score, toefl_score, preferred_location, phone, date_of_birth, password) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)';
+        // SQL query to insert the student record with the provided student_id
+        const query = 'INSERT INTO Students (student_id, first_name, last_name, email, gre_score, toefl_score, preferred_location, phone, date_of_birth, password) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
 
-        db.query(query, [first_name, last_name, email, gre_score, toefl_score, preferred_location, phone, date_of_birth, hashedPassword], (err, result) => {
+        db.query(query, [student_id, first_name, last_name, email, gre_score, toefl_score, preferred_location, phone, date_of_birth, hashedPassword], (err, result) => {
             if (err) {
                 return res.status(500).json({ error: err.message });
             }
-            return res.status(201).json({ message: 'Student created successfully', data: result });
+
+            return res.status(201).json({
+                message: 'Student created successfully',
+                data: {
+                    studentId: student_id, // Include the provided student_id
+                    first_name,
+                    last_name,
+                    email,
+                    gre_score,
+                    toefl_score,
+                    preferred_location,
+                    phone,
+                    date_of_birth
+                }
+            });
         });
     } catch (e) {
         return res.status(500).json({ error: e.message });
     }
 };
+
 
 // Login a student
 exports.loginStudent = async (req, res) => {
