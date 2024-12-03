@@ -147,3 +147,55 @@ exports.deleteStudent = (req, res) => {
         return res.status(500).json({ error: e.message });
     }
 };
+
+
+// Update preferred location
+exports.updatePreferredLocation = (req, res) => {
+    try {
+        const { student_id } = req.params;
+        const { preferred_location } = req.body;
+
+        const query = 'UPDATE Students SET preferred_location = ? WHERE student_id = ?';
+        db.query(query, [preferred_location, student_id], (err, result) => {
+            if (err) return res.status(500).json({ error: err.message });
+            if (result.affectedRows === 0) return res.status(404).json({ message: 'Student not found' });
+            return res.status(200).json({ message: 'Preferred location updated successfully' });
+        });
+    } catch (e) {
+        return res.status(500).json({ error: e.message });
+    }
+};
+
+// Update GRE score
+exports.updateGreScore = (req, res) => {
+    try {
+        const { student_id } = req.params;
+        const { gre_score } = req.body;
+
+        const query = 'UPDATE Students SET gre_score = ? WHERE student_id = ?';
+        db.query(query, [gre_score, student_id], (err, result) => {
+            if (err) return res.status(500).json({ error: err.message });
+            if (result.affectedRows === 0) return res.status(404).json({ message: 'Student not found' });
+            return res.status(200).json({ message: 'GRE score updated successfully' });
+        });
+    } catch (e) {
+        return res.status(500).json({ error: e.message });
+    }
+};
+
+// Update TOEFL score
+exports.updateToeflScore = (req, res) => {
+    try {
+        const { student_id } = req.params;
+        const { toefl_score } = req.body;
+
+        const query = 'UPDATE Students SET toefl_score = ? WHERE student_id = ?';
+        db.query(query, [toefl_score, student_id], (err, result) => {
+            if (err) return res.status(500).json({ error: err.message });
+            if (result.affectedRows === 0) return res.status(404).json({ message: 'Student not found' });
+            return res.status(200).json({ message: 'TOEFL score updated successfully' });
+        });
+    } catch (e) {
+        return res.status(500).json({ error: e.message });
+    }
+};
