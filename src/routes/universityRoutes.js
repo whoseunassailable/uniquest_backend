@@ -17,4 +17,7 @@ router.put('/universities/:university_id', universitiesController.updateUniversi
 // Route to delete a university
 router.delete('/universities/:university_id', universitiesController.deleteUniversity);
 
+// Route to search a university
+router.post('/universities/search', universitiesController.searchUniversity);
+
 module.exports = router;
